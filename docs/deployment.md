@@ -31,8 +31,8 @@ location ^~ /words/ {
 本仓库继续使用 Vite 纯静态构建，不需要 Worker 代码、账号、数据库或后端。
 `.openai/hosting.json` 指定 `static.directory = dist` 和
 `not_found_handling = single-page-application`；该配置依据当前 Sites 插件的
-静态构建准备器支持的字段。尚未注册 Site，因此有意不填写 `project_id`。
-不要填入示例 ID，也不要把 GitHub 仓库名当作 Site ID。
+静态构建准备器支持的字段。已注册私有、未发布 Site，真实 `project_id` 已写入配置；
+后续复用该 ID，不重新注册，也不要把 GitHub 仓库名当作 Site ID。
 
 ### 构建与资源路径
 
@@ -48,8 +48,8 @@ PowerShell 可以在构建前执行 `Remove-Item Env:ATLAS_BASE -ErrorAction Sil
 原有 `ATLAS_BASE=/words/` 子路径能力保留，部署 Sites 时不要沿用 GitHub Pages 的仓库子路径。
 
 - 应用、字体、词库、图片、音频和分享图均使用本次构建的本地资源；没有新增媒体外链。
-  `og:image` / `twitter:image` 当前随基础路径解析；获得实际域名后，如需社交平台分享卡片，
-  应将两项改为该域名的绝对 URL，不应猜测域名或复用原作者站点 URL。
+  `og:image` / `twitter:image` 使用 Sites 注册返回的 `expected_url` 下的本地分享图，
+  不复用原作者站点 URL。该预期域名不代表已发布；其他部署环境应改为其实际域名。
 - 页面使用 `#/atlas`、`#/me`、`#/w/abandon` 等 hash 路由，刷新时请求根页面。
   托管声明另外明确开启 SPA 回退。
 - PWA manifest 的 `start_url` 和图标为相对路径；Service Worker 通过
@@ -68,7 +68,7 @@ PowerShell 可以在构建前执行 `Remove-Item Env:ATLAS_BASE -ErrorAction Sil
 | 指标 | 结果 |
 | --- | --- |
 | 文件数 | 37,642 |
-| 总大小 | 665,489,121 bytes（634.66 MiB） |
+| 总大小 | 665,489,235 bytes（634.66 MiB） |
 | 最大文件 | `sfx/amb-stars.mp3`，1,857,035 bytes（1.77 MiB） |
 
 词库完整保留 7,298 词、14,596 例句、7,298 张插画、7,298 张缩略图、
@@ -76,7 +76,8 @@ PowerShell 可以在构建前执行 `Remove-Item Env:ATLAS_BASE -ErrorAction Sil
 
 当前 [Sites 官方说明](https://help.openai.com/en/articles/20001339-creating-and-using-chatgpt-sites)
 没有公布每站固定文件存储上限，但仍有共享用量和存储限制。
-当前工具没有查询部署文件配额的接口；尚未创建站点或尝试上传，不能证明当前账号一定容纳完整产物。
+当前工具没有查询部署文件配额的接口；已获准创建私有站点并保存完整版本，
+实际上传保存结果见本仓库 PR。保存归档成功与静态资源部署成功是不同证据，不能据此宣称已部署。
 Sites 技能说明其托管运行于 Cloudflare Workers；
 [Cloudflare 官方静态资源限制](https://developers.cloudflare.com/workers/platform/limits/#static-assets)
 为每文件 25 MiB，每版本免费档 20,000 文件、付费档 100,000 文件；
@@ -110,7 +111,7 @@ Sites 技能说明其托管运行于 Cloudflare Workers；
 ### 后续在 Codex 桌面端继续
 
 1. 检出本 PR 分支，保留完整 `public/`，读取当前 Sites 技能并重新确认账号配额。
-   先决定是否修复上述离线刷新问题；本次授权没有扩展为修复现有问题。
+   先决定是否修复上述离线刷新问题；当前授权没有扩展为修复现有问题。
 2. 获得发布授权后，先检查 `.openai/hosting.json`。没有 ID 才调用一次原生 `create_site`，
    将返回的真实 ID 用 Sites 的 `set-project-id.mjs` 持久化，同时保留现有 `static` 字段。
    已有 ID 则复用，不能重新注册替代站点。
@@ -118,4 +119,4 @@ Sites 技能说明其托管运行于 Cloudflare Workers；
    `build-site.mjs` 和打包，保留准确的提交 SHA 与归档路径；凭据仅通过 stdin 传递。
    上传元数据会增加少量文件，仍需以实际归档重新核算。不要提交 `node_modules/`、`dist/` 或凭据。
 4. 配额及离线问题解决并获准发布后，按当前 Sites 技能保存版本和部署，再验证真实域名。
-   当前 PR 没有注册 Site、保存 Sites 版本、上传部署归档或发布，也没有可报告的部署 URL。
+   当前 Site 仅用于私有版本保存验证，没有执行部署，也没有可报告的已部署 URL。

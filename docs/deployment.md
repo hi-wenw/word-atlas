@@ -78,6 +78,10 @@ PowerShell 可以在构建前执行 `Remove-Item Env:ATLAS_BASE -ErrorAction Sil
 没有公布每站固定文件存储上限，但仍有共享用量和存储限制。
 当前工具没有查询部署文件配额的接口；已获准创建私有站点并保存完整版本，
 实际上传保存结果见本仓库 PR。保存归档成功与静态资源部署成功是不同证据，不能据此宣称已部署。
+当前完整源码同步被 Sites Git 服务拒绝：先出现 HTTP 502 / 连接重置，按 Git 的错误建议
+仅为传输进程提高 `http.postBuffer` 后返回 HTTP 413（请求体过大）。服务未返回数值上限；
+尚未进入版本保存，不能把该错误解释为 20,000 文件限制。下一步候选是分批同步源码，
+保留完整资源和最终提交，但需先确认 Sites 的支持方式并取得调整决定，不继续整包重试。
 Sites 技能说明其托管运行于 Cloudflare Workers；
 [Cloudflare 官方静态资源限制](https://developers.cloudflare.com/workers/platform/limits/#static-assets)
 为每文件 25 MiB，每版本免费档 20,000 文件、付费档 100,000 文件；

@@ -84,7 +84,20 @@ PowerShell 可以在构建前执行 `Remove-Item Env:ATLAS_BASE -ErrorAction Sil
 未写入 GitHub PR 历史，没有修改、删除媒体或改变应用代码。
 此前整包同步出现 HTTP 502 / 连接重置，提高当前传输进程的 `http.postBuffer` 后返回
 HTTP 413（请求体过大）；服务未返回数值上限。分批传输解决了源码请求体限制，
-不代表已验证静态部署的文件数配额。完整归档的版本保存结果以本仓库 PR 为准。
+不代表已验证静态部署的文件数配额。
+
+**当前保存阻塞是连接器的单归档上传限制**：`save_site_version` 在上传前明确拒绝
+644,600,399 bytes（614.74 MiB）的完整 `tar.gz`，其数值上限为
+536,870,912 bytes（512 MiB），超出 107,729,487 bytes（102.74 MiB）。
+该错误不是 Cloudflare 文件数配额，也不是词库校验失败。当前工具仅有一个 `archive`
+参数，没有分卷上传接口，因此没有删减媒体或尝试把多个归档冒充一个版本。
+最小且不改变资源的恢复条件是平台支持至少 644,600,399 bytes 的单归档上传，
+或提供正式支持的分片上传入口；当前接口无法完成保存。
+
+匹配归档的 Sites 源提交为 `0d8d1221f570f0c928afa8ec92e17584a5832c9c`，
+本地完整归档为 `D:/Document/word-atlas-sites-artifacts/word-atlas-full.tar.gz`。
+失败发生在连接器上传阶段，尚未保存版本，也没有部署。后续仅补充此文档的提交
+不影响应用构建；恢复时先核对同一站点的源分支与归档对应关系，不重新创建站点。
 Sites 技能说明其托管运行于 Cloudflare Workers；
 [Cloudflare 官方静态资源限制](https://developers.cloudflare.com/workers/platform/limits/#static-assets)
 为每文件 25 MiB，每版本免费档 20,000 文件、付费档 100,000 文件；

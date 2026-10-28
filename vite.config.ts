@@ -90,6 +90,18 @@ export default defineConfig({
   plugins: [
     react(),
     {
+      name: "distribution-licenses",
+      generateBundle() {
+        for (const fileName of ["LICENSE", "CONTENT_LICENSE.md"]) {
+          this.emitFile({
+            type: "asset",
+            fileName,
+            source: fs.readFileSync(path.resolve(fileName), "utf8"),
+          });
+        }
+      },
+    },
+    {
       name: "private-local-library",
       configureServer(server) {
         server.middlewares.use(localMedia);

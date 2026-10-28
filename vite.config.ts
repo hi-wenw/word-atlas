@@ -90,6 +90,19 @@ export default defineConfig({
   plugins: [
     react(),
     {
+      name: "distribution-licenses",
+      generateBundle() {
+        for (const file of ["LICENSE", "CONTENT_LICENSE.md"]) {
+          this.emitFile({ type: "asset", fileName: file, source: fs.readFileSync(file, "utf8") });
+        }
+        this.emitFile({
+          type: "asset",
+          fileName: "FRAUNCES_LICENSE.txt",
+          source: fs.readFileSync("node_modules/@fontsource-variable/fraunces/LICENSE", "utf8"),
+        });
+      },
+    },
+    {
       name: "private-local-library",
       configureServer(server) {
         server.middlewares.use(localMedia);

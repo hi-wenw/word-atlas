@@ -17,6 +17,11 @@ export function About() {
             词光把雅思阅读 8000 词整理成 {atlas.count.toLocaleString()} 个词条。每个词一幅原创插画，一句日常例句，一句雅思例句，配英美发音、常用搭配和易混提示。学会一个，就在你的星图上点亮一颗星。
           </p>
           <p className="lede">它免费、开源、无需注册。代码用 MIT，词库用 CC BY 4.0，谁都可以拿去用。</p>
+          <p className="muted">
+            Word Atlas contributors — <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>。
+            原作：<a href="https://github.com/designfuchen/word-atlas" target="_blank" rel="noreferrer">词光 Word Atlas</a>。
+            词库、插画与录音沿用原作，未作内容修改。
+          </p>
           <div className="about-actions">
             <a className="btn btn-primary" href={REPO_URL} target="_blank" rel="noreferrer">
               <Github size={18} /> 在 GitHub 上查看
